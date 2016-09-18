@@ -1,18 +1,23 @@
 <?php
 namespace microFrame\common;
 use microFrame\lavender\Exception;
-use microFrame\common\Errno;
-class GetConfigInfo
-{
-    private static $config_cache = array();
-
+use microFrame\common\Error;
+private static $config_cache = array();
+    /**
+     * function can get configuration file info ,you can use type param to distinguish different type configuration file 
+     * for example (const,cache,db,invoke) and so on
+     * @param $type
+     * @param $key
+     * @return mixed
+     * @throws Exception
+     */
     public static function get_config($type, $key)
     {
         //load
         $cache_key = $type;
         if (empty(self::$config_cache[$cache_key]) ) {
             if (strpos('/', $type) !== false || strpos('\\', $type) !== false) {
-                throw new Exception("config '{$type}' is invalid", Errno::CONFIG_TYPE_INVALID);
+                throw new Exception("config '{$type}' is invalid", Error::CONFIG_TYPE_INVALID);
             }
 
             //load from file
@@ -24,7 +29,7 @@ class GetConfigInfo
             }
             self::$config_cache[$cache_key] = include $file;
             if (self::$config_cache[$cache_key] === false)	{
-                throw new Exception("config {$type} not exists,file path:{$file}", Errno::CONFIG_TYPE_INVALID);
+                throw new Exception("config {$type} not exists,file path:{$file}", Error::CONFIG_TYPE_INVALID);
             }
         }
 
@@ -39,6 +44,6 @@ class GetConfigInfo
         }
 
         //key not found
-        throw new Exception("config key not found,type:{$type},key:{$key}", Errno::CONFIG_ITEM_INVALID);
+        throw new Exception("config key not found,type:{$type},key:{$key}", Error::CONFIG_ITEM_INVALID);
     }
 }
